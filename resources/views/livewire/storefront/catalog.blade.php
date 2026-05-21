@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-gray-950 text-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-4xl font-black text-white tracking-tight">Catálogo de Singles</h1>
+                <p class="text-gray-400 mt-2 text-lg">Encuentra las cartas que faltan para tu mazo competitivo.</p>
+            </div>
+
+            <div class="w-full md:w-1/3">
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar por Pokémon o Entrenador..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-blue-500 shadow-inner transition-colors">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @forelse($products as $product)
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 flex flex-col hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-900/20 group">
+
+                    <div class="relative overflow-hidden rounded-xl mb-4 flex justify-center bg-gray-950 p-2">
+                        <img src="{{ $product->card->image_url }}" alt="{{ $product->card->name }}" class="w-48 h-64 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl">
+                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-blue-400 border border-gray-800">
+                            {{ $product->condition }}
+                        </div>
+                    </div>
+
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white leading-tight mb-1">{{ $product->card->name }}</h3>
+                        <p class="text-xs text-gray-500 mb-3">{{ $product->card->set->name ?? 'Sin Set' }}</p>
+
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-[10px] uppercase font-bold tracking-wider">{{ $product->language }}</span>
+                            <span class="px-2 py-1 bg-blue-900/30 text-blue-400 border border-blue-800/50 rounded text-[10px] uppercase font-bold tracking-wider">{{ $product->variant }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-800 flex items-center justify-between">
+                        <div class="text-2xl font-black text-emerald-400">${{ number_format($product->price, 0, ',', '.') }}</div>
+                        <button class="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-95" title="Agregar al carrito">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full flex flex-col items-center justify-center py-20 bg-gray-900 border border-gray-800 rounded-3xl">
+                    <svg class="h-16 w-16 text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <h3 class="text-xl font-medium text-white">No hay cartas en venta por ahora</h3>
+                    <p class="text-gray-500 mt-2">Estamos reabasteciendo el stock.</p>
+                </div>
+            @endforelse
+        </div>
+
+        @if($products->hasPages())
+            <div class="mt-10 p-4 bg-gray-900 border border-gray-800 rounded-2xl">
+                {{ $products->links() }}
+            </div>
+        @endif
+    </div>
+</div>

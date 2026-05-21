@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden South TCG</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-950 text-gray-200 antialiased selection:bg-blue-500 selection:text-white">
+
+<main>
+    {{ $slot }}
+</main>
+
+</body>
+</html>
