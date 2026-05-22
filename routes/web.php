@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Storefront\Catalog; // <--- ESTA ES LA LÍNEA QUE FALTABA
+use App\Livewire\Storefront\Catalog;
 
 Route::get('/', Catalog::class)->name('storefront.catalog');
 
@@ -16,6 +16,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin/inventario', \App\Livewire\Admin\InventoryManager::class)->name('admin.inventario');
+Route::get('/admin/inventario', \App\Livewire\Admin\InventoryManager::class)
+    ->middleware(['auth'])
+    ->name('admin.inventario');
 
 require __DIR__.'/auth.php';
