@@ -13,7 +13,6 @@ new class extends Component
         $this->updateCartCount();
     }
 
-    // Este es el micrófono que escucha cuando agregas una carta
     #[On('cart-updated')]
     public function updateCartCount()
     {

@@ -20,7 +20,6 @@ class Catalog extends Component
         $this->resetPage();
     }
 
-    // 2. Función que se dispara al hacer clic en la tarjeta
     public function openQuickView($id)
     {
         $this->selectedProduct = Inventory::with(['card.set'])->find($id);
@@ -34,12 +33,10 @@ class Catalog extends Component
 
     public function render()
     {
-        // Solo mostramos cartas activas y con stock
         $query = Inventory::with(['card.set'])
             ->where('is_active', true)
             ->where('stock', '>', 0);
 
-        // 4. El buscador público (ahora buscando por artista también)
         if (!empty($this->search)) {
             $query->whereHas('card', function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
@@ -50,5 +47,42 @@ class Catalog extends Component
         return view('livewire.storefront.catalog', [
             'products' => $query->orderBy('created_at', 'desc')->paginate(12),
         ]);
+    }
+
+    public function addToCart($inventoryId)
+    {
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($inventoryId) {
+
+            $inventory = \App\Models\Inventory::where('id', $inventoryId)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$inventory || $inventory->stock < 1) {
+                return;
+            }
+
+            $cart = \App\Models\Cart::firstOrCreate([
+                'session_id' => session()->getId(),
+                'user_id' => auth()->id(),
+            ]);
+
+            $cartItem = $cart->items()->where('inventory_id', $inventoryId)->first();
+
+            if ($cartItem) {
+                if ($inventory->stock > $cartItem->quantity) {
+                    $cartItem->increment('quantity');
+                }
+            } else {
+                $cart->items()->create([
+                    'inventory_id' => $inventoryId,
+                    'quantity' => 1
+                ]);
+            }
+        });
+
+        $this->closeQuickView();
+
+        $this->dispatch('cart-updated');
     }
 }

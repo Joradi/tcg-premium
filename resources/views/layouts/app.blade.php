@@ -24,11 +24,13 @@
             <div class="flex items-center gap-4">
                 <a href="{{ route('storefront.catalog') }}" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Catálogo</a>
 
+                <livewire:storefront.cart-widget />
+
                 <div class="h-6 w-px bg-gray-800 mx-2"></div>
 
                 @auth
                     @if(auth()->user()->is_admin)
-                    <a href="{{ route('admin.inventario') }}" class="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">Panel Admin</a>
+                        <a href="{{ route('admin.inventario') }}" class="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">Panel Admin</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
