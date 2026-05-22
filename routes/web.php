@@ -17,7 +17,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/admin/inventario', \App\Livewire\Admin\InventoryManager::class)
-    ->middleware(['auth'])
+    ->middleware(['auth', \App\Http\Middleware\IsAdmin::class])
     ->name('admin.inventario');
 
 require __DIR__.'/auth.php';

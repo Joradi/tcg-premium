@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-950 text-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-950 text-gray-200 py-12 px-4 sm:px-6 lg:px-8 relative">
     <div class="max-w-7xl mx-auto">
 
         <div class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
@@ -14,7 +14,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse($products as $product)
-                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 flex flex-col hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-900/20 group">
+                <div wire:click="openQuickView({{ $product->id }})" class="cursor-pointer bg-gray-900 border border-gray-800 rounded-2xl p-4 flex flex-col hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-900/20 group">
 
                     <div class="relative overflow-hidden rounded-xl mb-4 flex justify-center bg-gray-950 p-2">
                         <img src="{{ $product->card->image_url }}" alt="{{ $product->card->name }}" class="w-48 h-64 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl">
@@ -35,7 +35,7 @@
 
                     <div class="mt-auto pt-4 border-t border-gray-800 flex items-center justify-between">
                         <div class="text-2xl font-black text-emerald-400">${{ number_format($product->price, 0, ',', '.') }}</div>
-                        <button class="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-95" title="Agregar al carrito">
+                        <button wire:click.stop="" class="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-95" title="Agregar al carrito">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </button>
                     </div>
@@ -55,4 +55,72 @@
             </div>
         @endif
     </div>
+
+    @if($selectedProduct)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" wire:click="closeQuickView"></div>
+
+            <div class="relative w-full max-w-3xl bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row z-50">
+
+                <button wire:click="closeQuickView" class="absolute top-4 right-4 text-gray-400 hover:text-white z-10 bg-gray-900/80 rounded-full p-1 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div class="w-full md:w-2/5 p-6 bg-gray-950/50 flex items-center justify-center border-r border-gray-800">
+                    <img src="{{ $selectedProduct->card->image_url }}" alt="{{ $selectedProduct->card->name }}" class="w-full max-h-[450px] rounded-lg shadow-lg shadow-black/50 object-contain transition-transform duration-300">
+                </div>
+
+                <div class="w-full md:w-3/5 p-8 flex flex-col justify-center">
+
+                    <h2 class="text-3xl font-bold text-white tracking-tight">{{ $selectedProduct->card->name }}</h2>
+                    <p class="text-gray-400 mt-1 text-sm font-medium">
+                        {{ $selectedProduct->card->set->name ?? 'Sin Set' }}
+                        <span class="text-gray-500">· #{{ $selectedProduct->card->card_number }}/{{ $selectedProduct->card->set->set_total ?? '?' }}</span>
+                    </p>
+
+                    <div class="h-px bg-gray-800 w-full my-5"></div>
+
+                    <div class="space-y-2 mb-6 text-sm">
+                        <div class="flex justify-between gap-4">
+                            <span class="text-gray-500">Rareza</span>
+                            <span class="text-gray-200 font-medium text-right">{{ $selectedProduct->card->rarity ?? 'Desconocida' }}</span>
+                        </div>
+                        <div class="flex justify-between gap-4">
+                            <span class="text-gray-500">Artista</span>
+                            <span class="text-gray-200 font-medium text-right">{{ $selectedProduct->card->artist ?? 'Desconocido' }}</span>
+                        </div>
+                        @if($selectedProduct->card->card_type)
+                            <div class="flex justify-between gap-4">
+                                <span class="text-gray-500">Tipo</span>
+                                <span class="text-blue-400 font-semibold text-right">{{ $selectedProduct->card->card_type }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="bg-gray-950 border border-gray-800 rounded-xl p-5 mb-6 shadow-inner">
+                        <div class="flex items-baseline gap-2 mb-3">
+                            <span class="text-3xl font-black text-emerald-400">${{ number_format($selectedProduct->price, 0, ',', '.') }}</span>
+                            <span class="text-sm text-gray-500 uppercase">CLP</span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">{{ $selectedProduct->language }}</span>
+                            <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">{{ $selectedProduct->condition }}</span>
+                            <span class="px-2.5 py-1 bg-blue-900/20 text-blue-400 border border-blue-900/30 rounded-lg text-xs font-semibold">{{ $selectedProduct->variant }}</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2 text-sm uppercase tracking-wider active:scale-[0.98]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Agregar al Carrito
+                    </button>
+
+                    <p class="text-center text-xs text-gray-500 mt-3.5 font-medium">
+                        Solo quedan {{ $selectedProduct->stock }} unidades en inventario
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

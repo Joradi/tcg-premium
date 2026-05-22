@@ -33,7 +33,8 @@ class InventoryManager extends Component
 
         if (!empty($this->search)) {
             $query->whereHas('card', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('artist', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -45,12 +46,11 @@ class InventoryManager extends Component
             $query->where('language', $this->filterLanguage);
         }
 
-        // Buscador de cartas de la API/Base para asociar al inventario
+
         $availableCards = [];
         if (strlen($this->cardSearch) > 1) {
             $search = $this->cardSearch;
 
-            // Detectamos si el texto tiene un "/" (Ej: 179/189)
             if (str_contains($search, '/')) {
                 $parts = explode('/', $search);
                 $cardNumber = trim($parts[0]); // El 179
@@ -64,7 +64,6 @@ class InventoryManager extends Component
                     ->take(8)
                     ->get();
             } else {
-                // Búsqueda clásica por nombre o número simple
                 $availableCards = Card::with('set')
                     ->where('name', 'like', '%' . $search . '%')
                     ->orWhere('card_number', 'like', '%' . $search . '%')
