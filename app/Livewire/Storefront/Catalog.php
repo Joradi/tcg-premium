@@ -2,9 +2,14 @@
 
 namespace App\Livewire\Storefront;
 
+use App\Models\Cart;
 use App\Models\Inventory;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+
+
+
 
 class Catalog extends Component
 {
@@ -14,6 +19,10 @@ class Catalog extends Component
 
     // 1. La variable que guarda la carta seleccionada para el Modal
     public $selectedProduct = null;
+
+    public ?string $cartMessage = null;
+
+    public string $cartMessageType = 'success';
 
     protected function updatingSearch()
     {
@@ -49,40 +58,70 @@ class Catalog extends Component
         ]);
     }
 
-    public function addToCart($inventoryId)
+    public function addToCart(int $inventoryId): void
     {
+        $cartUpdated = DB::transaction(function () use ($inventoryId): bool {
+           $inventory = Inventory::query()
+           ->lockForUpdate()
+           ->find($inventoryId);
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($inventoryId) {
+           if(!$inventory || $inventory->stock < 1) {
+               $this->cartMessage = 'Este producto no tiene stock disponible.';
+               $this->cartMessageType = 'error';
 
-            $inventory = \App\Models\Inventory::where('id', $inventoryId)
-                ->lockForUpdate()
-                ->first();
+               return false;
+           }
 
-            if (!$inventory || $inventory->stock < 1) {
-                return;
-            }
+           $cart = Cart::firstOrCreate([
+               'session_id' => session()->getId(),
+               'user_id' => auth()->id(),
+           ]);
 
-            $cart = \App\Models\Cart::firstOrCreate([
-                'session_id' => session()->getId(),
-                'user_id' => auth()->id(),
-            ]);
+           $cartItem = $cart->items()
+               ->where('inventory_id', $inventoryId)
+               ->lockForUpdate()
+               ->first();
 
-            $cartItem = $cart->items()->where('inventory_id', $inventoryId)->first();
+           if ($cartItem)
+           {
+               if ($cartItem->quantity >= $inventory->stock)
+               {
+                   $this->cartMessage = 'No puedes agregar más unidades que el stock disponible.';
+                   $this->cartMessageType = 'error';
 
-            if ($cartItem) {
-                if ($inventory->stock > $cartItem->quantity) {
-                    $cartItem->increment('quantity');
-                }
-            } else {
-                $cart->items()->create([
-                    'inventory_id' => $inventoryId,
-                    'quantity' => 1
-                ]);
-            }
+                   return false;
+               }
+               $cartItem->increment('quantity');
+
+               $this->cartMessage = 'Cantidad actualizada en el carrito';
+               $this->cartMessageType = 'success';
+
+               return true;
+           }
+
+           $cart->items()->create([
+              'inventory_id' => $inventoryId,
+              'quantity' => 1,
+           ]);
+
+           $this->cartMessage = 'Producto agregado al carrito';
+           $this->cartMessageType = 'success';
+
+           return true;
+
         });
 
         $this->closeQuickView();
 
-        $this->dispatch('cart-updated');
+        $this->dispatch(
+            'cart-notification',
+            message: $this->cartMessage,
+            type: $this->cartMessageType
+        );
+
+        if($cartUpdated){
+            $this->dispatch('cart-updated');
+        }
+
     }
 }
