@@ -1,4 +1,54 @@
 <div class="min-h-screen bg-gray-950 text-gray-200 py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div
+        x-data="{
+        visible: false,
+        message: '',
+        type: 'success',
+        timeout: null
+    }"
+        x-on:cart-notification.window="
+        clearTimeout(timeout);
+
+        message = $event.detail.message;
+        type = $event.detail.type;
+        visible = true;
+
+        timeout = setTimeout(() => {
+            visible = false;
+        }, 3500);
+    "
+        x-show="visible"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        :class="type === 'success'
+        ? 'border-emerald-500/40 bg-emerald-950/95 text-emerald-200'
+        : 'border-red-500/40 bg-red-950/95 text-red-200'"
+        :role="type === 'error' ? 'alert' : 'status'"
+        class="fixed left-1/2 top-20 z-[100] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl border px-4 py-3 shadow-2xl backdrop-blur"
+        style="display: none;"
+    >
+        <div class="flex items-start gap-3">
+        <span
+            class="mt-0.5 font-bold"
+            x-text="type === 'success' ? '✓' : '!'"
+        ></span>
+
+            <p class="flex-1 text-sm font-medium" x-text="message"></p>
+
+            <button
+                type="button"
+                class="opacity-70 transition hover:opacity-100"
+                x-on:click="visible = false"
+                aria-label="Cerrar notificación"
+            >
+                &times;
+            </button>
+        </div>
+    </div>
     <div class="max-w-7xl mx-auto">
 
         <div class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
@@ -110,9 +160,40 @@
                         </div>
                     </div>
 
-                    <button class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2 text-sm uppercase tracking-wider active:scale-[0.98]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        Agregar al Carrito
+                    <button
+                        type="button"
+                        wire:click="addToCart({{ $selectedProduct->id }})"
+                        wire:loading.attr="disabled"
+                        wire:target="addToCart"
+                        class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700
+                        disabled:cursor-not-allowed disabled:opacity-60
+                        text-white font-bold py-3.5 px-4 rounded-xl transition-all
+                        shadow-lg shadow-blue-600/20 flex justify-center items-center
+                        gap-2 text-sm uppercase tracking-wider active:scale-[0.98]"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293
+                                   2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4
+                                   2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                            ></path>
+                        </svg>
+
+                        <span wire:loading.remove wire:target="addToCart">
+                        Agregar al carrito
+                        </span>
+
+                        <span wire:loading wire:target="addToCart">
+                         Agregando...
+                        </span>
                     </button>
 
                     <p class="text-center text-xs text-gray-500 mt-3.5 font-medium">
