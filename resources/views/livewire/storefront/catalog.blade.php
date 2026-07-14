@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-950 text-gray-200 py-12 px-4 sm:px-6 lg:px-8 relative">
+<div class="relative min-h-screen bg-[#12001F] px-4 py-12 text-[#FFF8E7] sm:px-6 lg:px-8">
     <div
         x-data="{
         visible: false,
@@ -51,24 +51,32 @@
     </div>
     <div class="max-w-7xl mx-auto">
 
-        <div class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="mb-10 flex flex-col items-center justify-between gap-6 rounded-3xl border border-[#7B2CBF]/20 bg-[#2B2D42]/30 px-6 py-7 text-center shadow-[0_20px_60px_rgba(0,0,0,0.16)] backdrop-blur md:flex-row md:text-left lg:px-8">
             <div>
                 <h1 class="text-4xl font-black text-white tracking-tight">Catálogo de Singles</h1>
                 <p class="text-gray-400 mt-2 text-lg">Encuentra las cartas que faltan para tu mazo competitivo.</p>
             </div>
 
-            <div class="w-full md:w-1/3">
-                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar por Pokémon o Entrenador..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-blue-500 shadow-inner transition-colors">
+            <div class="w-full md:max-w-md">
+                <input
+                    wire:model.live.debounce.300ms="search"
+                    type="search"
+                    placeholder="Buscar por Pokémon o Entrenador..."
+                    class="w-full rounded-xl border border-[#7B2CBF]/30 bg-[#2B2D42]/55 px-5 py-3 text-[#FFF8E7] shadow-inner outline-none transition placeholder:text-[#FFF8E7]/35 focus:border-[#80FFDB]/60 focus:ring-4 focus:ring-[#80FFDB]/10"
+                />
             </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,280px))] justify-center gap-6 xl:gap-8">
             @forelse($products as $product)
-                <div wire:click="openQuickView({{ $product->id }})" class="cursor-pointer bg-gray-900 border border-gray-800 rounded-2xl p-4 flex flex-col hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-900/20 group">
+                <div
+                    wire:click="openQuickView({{ $product->id }})"
+                    class="group flex cursor-pointer flex-col rounded-2xl border border-[#7B2CBF]/25 bg-[#2B2D42]/70 p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-[#80FFDB]/35 hover:shadow-[0_24px_70px_rgba(90,24,154,0.22)]"
+                >
 
                     <div class="relative overflow-hidden rounded-xl mb-4 flex justify-center bg-gray-950 p-2">
                         <img src="{{ $product->card->image_url }}" alt="{{ $product->card->name }}" class="w-48 h-64 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-xl">
-                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-blue-400 border border-gray-800">
+                        <div class="absolute right-2 top-2 rounded-lg border border-[#7B2CBF]/40 bg-[#12001F]/90 px-2.5 py-1 text-xs font-bold text-[#80FFDB] shadow-lg backdrop-blur-sm">
                             {{ $product->condition }}
                         </div>
                     </div>
@@ -79,14 +87,30 @@
 
                         <div class="flex flex-wrap gap-2 mb-4">
                             <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-[10px] uppercase font-bold tracking-wider">{{ $product->language }}</span>
-                            <span class="px-2 py-1 bg-blue-900/30 text-blue-400 border border-blue-800/50 rounded text-[10px] uppercase font-bold tracking-wider">{{ $product->variant }}</span>
+                            <span class="rounded-lg border border-[#7B2CBF]/40 bg-[#7B2CBF]/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#FFF8E7]/75">
+                                {{ $product->variant }}
+                            </span>
                         </div>
                     </div>
 
                     <div class="mt-auto pt-4 border-t border-gray-800 flex items-center justify-between">
                         <div class="text-2xl font-black text-emerald-400">${{ number_format($product->price, 0, ',', '.') }}</div>
-                        <button wire:click.stop="addToCart({{ $product->id }})" class="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-95" title="Agregar al carrito">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <button
+                            type="button"
+                            wire:click.stop="addToCart({{ $product->id }})"
+                            wire:loading.attr="disabled"
+                            wire:target="addToCart"
+                            class="rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] p-2.5 text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-all hover:bg-[#5A189A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                            title="Agregar al carrito"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                ></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -107,16 +131,24 @@
     </div>
 
     @if($selectedProduct)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" wire:click="closeQuickView"></div>
+        <div class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:p-6 md:items-center">
+            <div
+                class="fixed inset-0 bg-[#12001F]/90 backdrop-blur-md transition-opacity"
+                wire:click="closeQuickView"
+            ></div>
 
-            <div class="relative w-full max-w-3xl bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row z-50">
+            <div class="relative z-50 flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[#7B2CBF]/30 bg-[#2B2D42] shadow-[0_30px_100px_rgba(0,0,0,0.55)] md:flex-row">
 
-                <button wire:click="closeQuickView" class="absolute top-4 right-4 text-gray-400 hover:text-white z-10 bg-gray-900/80 rounded-full p-1 transition-colors">
+                <button
+                    type="button"
+                    wire:click="closeQuickView"
+                    class="absolute right-4 top-4 z-10 rounded-full border border-[#7B2CBF]/25 bg-[#12001F]/80 p-2 text-[#FFF8E7]/55 transition hover:border-[#80FFDB]/40 hover:text-[#80FFDB]"
+                    aria-label="Cerrar detalle del producto"
+                >
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
 
-                <div class="w-full md:w-2/5 p-6 bg-gray-950/50 flex items-center justify-center border-r border-gray-800">
+                <div class="flex w-full items-center justify-center border-b border-[#7B2CBF]/20 bg-[#12001F]/70 p-6 md:w-2/5 md:border-b-0 md:border-r md:p-8">
                     <img src="{{ $selectedProduct->card->image_url }}" alt="{{ $selectedProduct->card->name }}" class="w-full max-h-[450px] rounded-lg shadow-lg shadow-black/50 object-contain transition-transform duration-300">
                 </div>
 
@@ -147,16 +179,35 @@
                         @endif
                     </div>
 
-                    <div class="bg-gray-950 border border-gray-800 rounded-xl p-5 mb-6 shadow-inner">
-                        <div class="flex items-baseline gap-2 mb-3">
-                            <span class="text-3xl font-black text-emerald-400">${{ number_format($selectedProduct->price, 0, ',', '.') }}</span>
-                            <span class="text-sm text-gray-500 uppercase">CLP</span>
+                    <div class="mb-6 rounded-2xl border border-[#7B2CBF]/25 bg-[#12001F]/70 p-5 shadow-inner">
+                        <div class="mb-4 flex items-end justify-between gap-4">
+                            <div>
+                                <p class="mb-1 text-xs font-bold uppercase tracking-wider text-[#FFF8E7]/45">
+                                    Precio
+                                </p>
+
+                                <span class="text-3xl font-black tabular-nums text-[#80FFDB]">
+                ${{ number_format($selectedProduct->price, 0, ',', '.') }}
+            </span>
+                            </div>
+
+                            <span class="text-right text-[11px] text-[#FFF8E7]/35">
+            Pesos chilenos
+        </span>
                         </div>
 
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">{{ $selectedProduct->language }}</span>
-                            <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">{{ $selectedProduct->condition }}</span>
-                            <span class="px-2.5 py-1 bg-blue-900/20 text-blue-400 border border-blue-900/30 rounded-lg text-xs font-semibold">{{ $selectedProduct->variant }}</span>
+        <span class="rounded-lg bg-[#2B2D42] px-2.5 py-1 text-xs font-semibold text-[#FFF8E7]/75">
+            {{ $selectedProduct->language }}
+        </span>
+
+                            <span class="rounded-lg border border-[#80FFDB]/20 bg-[#80FFDB]/10 px-2.5 py-1 text-xs font-semibold text-[#80FFDB]">
+            {{ $selectedProduct->condition }}
+        </span>
+
+                            <span class="rounded-lg border border-[#7B2CBF]/40 bg-[#7B2CBF]/15 px-2.5 py-1 text-xs font-semibold text-[#FFF8E7]/75">
+            {{ $selectedProduct->variant }}
+        </span>
                         </div>
                     </div>
 
@@ -165,11 +216,9 @@
                         wire:click="addToCart({{ $selectedProduct->id }})"
                         wire:loading.attr="disabled"
                         wire:target="addToCart"
-                        class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700
-                        disabled:cursor-not-allowed disabled:opacity-60
-                        text-white font-bold py-3.5 px-4 rounded-xl transition-all
-                        shadow-lg shadow-blue-600/20 flex justify-center items-center
-                        gap-2 text-sm uppercase tracking-wider active:scale-[0.98]"
+                        class="flex w-full items-center justify-center gap-2 rounded-xl border border-[#7B2CBF] bg-[#7B2CBF]
+                        px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20
+                        transition-all hover:bg-[#5A189A] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <svg
                             class="w-5 h-5"
