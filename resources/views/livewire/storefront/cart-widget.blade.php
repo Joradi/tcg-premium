@@ -16,18 +16,18 @@
                  x-transition:enter="ease-in-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="ease-in-out duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                  @click="open = false"
-                 class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+                 class="absolute inset-0 bg-[#12001F]/85 backdrop-blur-sm transition-opacity"></div>
 
             <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <div x-show="open"
                      x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
                      x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                     class="pointer-events-auto w-screen max-w-md">
+                     class="pointer-events-auto w-screen max-w-lg">
 
-                    <div class="flex h-full flex-col bg-gray-900 shadow-2xl border-l border-gray-800">
+                    <div class="flex h-full flex-col border-l border-[#7B2CBF]/30 bg-[#12001F] shadow-2xl shadow-black/50">
                         <div class="flex items-start justify-between px-6 py-5 border-b border-gray-800">
-                            <h2 class="text-xl font-black text-white uppercase tracking-tight" id="slide-over-title">Tu Mazo</h2>
-                            <button @click="open = false" class="text-gray-400 hover:text-white transition-colors p-1">
+                            <h2 class="text-xl font-black uppercase tracking-tight text-[#FFF8E7]" id="slide-over-title">Tu Mazo</h2>
+                            <button @click="open = false" class="p-1 text-[#FFF8E7]/55 transition-colors hover:text-[#80FFDB]">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
@@ -39,40 +39,23 @@
                                     <p class="text-lg font-medium">El carrito está vacío</p>
                                 </div>
                             @else
-                                <ul role="list" class="-my-6 divide-y divide-gray-800">
+                                <ul role="list" class="space-y-4">
                                     @foreach($this->cartItems as $item)
-                                        <li class="flex py-6">
-                                            <div class="h-24 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-800 bg-gray-950 flex items-center justify-center">
-                                                <img src="{{ $item->inventory->card->image_url }}" alt="{{ $item->inventory->card->name }}" class="h-full w-full object-contain object-center">
-                                            </div>
-
-                                            <div class="ml-4 flex flex-1 flex-col justify-center">
-                                                <div>
-                                                    <div class="flex justify-between text-base font-bold text-white">
-                                                        <h3>{{ $item->inventory->card->name }}</h3>
-                                                        <p class="ml-4 text-emerald-400">${{ number_format($item->inventory->price * $item->quantity, 0, ',', '.') }}</p>
-                                                    </div>
-                                                    <p class="mt-1 text-xs text-gray-500">{{ $item->inventory->language }} · {{ $item->inventory->condition }}</p>
-                                                </div>
-                                                <div class="flex flex-1 items-end justify-between text-sm mt-2">
-                                                    <p class="text-gray-400 font-medium">Cant: {{ $item->quantity }}</p>
-
-                                                    <button wire:click="removeItem({{ $item->id }})" type="button" class="font-medium text-red-500 hover:text-red-400 transition-colors">Eliminar</button>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        @include('livewire.storefront.partials.cart-item', [
+                                            'item' => $item,
+                                        ])
                                     @endforeach
                                 </ul>
                             @endif
                         </div>
 
-                        <div class="border-t border-gray-800 px-6 py-6 bg-gray-950/50">
+                        <div class="border-t border-[#7B2CBF]/25 bg-[#2B2D42]/45 px-6 py-6">
                             <div class="flex justify-between text-lg font-black text-white mb-4">
                                 <p>Total</p>
-                                <p class="text-emerald-400">${{ number_format($this->cartTotal, 0, ',', '.') }} CLP</p>
+                                <p class="text-[#80FFDB]">${{ number_format($this->cartTotal, 0, ',', '.') }} CLP</p>
                             </div>
 
-                            <button @if($this->cartItems->isEmpty()) disabled @endif class="w-full flex items-center justify-center rounded-xl border border-transparent bg-blue-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button @if($this->cartItems->isEmpty()) disabled @endif class="flex w-full items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-6 py-4 text-base font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-colors hover:bg-[#5A189A] disabled:cursor-not-allowed disabled:opacity-50">
                                 Proceder al Pago
                             </button>
 
