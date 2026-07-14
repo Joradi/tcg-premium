@@ -50,14 +50,21 @@
                         </div>
 
                         <div class="border-t border-[#7B2CBF]/25 bg-[#2B2D42]/45 px-6 py-6">
-                            <div class="flex justify-between text-lg font-black text-white mb-4">
-                                <p>Total</p>
-                                <p class="text-[#80FFDB]">${{ number_format($this->cartTotal, 0, ',', '.') }} CLP</p>
+                            <div class="mb-4 flex items-baseline justify-between gap-4 text-lg font-black text-[#FFF8E7]">
+                                <p class="shrink-0">Total</p>
+
+                                <p class="min-w-0 whitespace-nowrap text-right tabular-nums text-[#80FFDB]">
+                                    ${{ number_format($this->cartTotal, 0, ',', '.') }}
+                                </p>
                             </div>
 
                             <button @if($this->cartItems->isEmpty()) disabled @endif class="flex w-full items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-6 py-4 text-base font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-colors hover:bg-[#5A189A] disabled:cursor-not-allowed disabled:opacity-50">
                                 Proceder al Pago
                             </button>
+
+                            <p class="mt-3 text-center text-[11px] text-[#FFF8E7]/40">
+                                Precios expresados en pesos chilenos
+                            </p>
 
                             <div class="mt-4 flex justify-center text-center text-xs text-gray-500">
                                 <p>

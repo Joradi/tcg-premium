@@ -34,7 +34,7 @@
                 Stock disponible: {{ $item->inventory->stock }}
             </p>
 
-            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="mt-4 flex flex-wrap items-center gap-3">
                 <div class="inline-flex items-center rounded-xl border border-[#7B2CBF]/40 bg-[#12001F] p-1">
                     <button
                         type="button"
@@ -67,7 +67,7 @@
                     type="button"
                     wire:click="removeItem({{ $item->id }})"
                     wire:loading.attr="disabled"
-                    class="text-xs font-bold uppercase tracking-wider text-[#FFF8E7]/55 transition hover:text-[#80FFDB] disabled:opacity-40"
+                    class="rounded-lg px-2 py-2 text-xs font-bold uppercase tracking-wider text-[#FFF8E7]/55 transition hover:bg-[#80FFDB]/10 hover:text-[#80FFDB] disabled:opacity-40"
                 >
                     Quitar
                 </button>
