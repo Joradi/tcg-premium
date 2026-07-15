@@ -22,7 +22,7 @@ class InventoryManager extends Component
     public $cardSearch = '';
     public $selectedCard = null;
 
-    protected function updatingSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
@@ -144,6 +144,9 @@ class InventoryManager extends Component
         $inventory = Inventory::with('card.set')->findOrFail($id);
         $this->inventoryId = $id;
         $this->card_id = $inventory->card_id;
+        $this->selectedCard = $inventory->card;
+        $this->cardSearch = '';
+
         $this->language = $inventory->language;
         $this->condition = $inventory->condition;
         $this->variant = $inventory->variant;
