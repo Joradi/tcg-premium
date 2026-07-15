@@ -7,6 +7,7 @@ use App\Models\Card;
 use App\Models\Inventory;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
 
 class InventoryManager extends Component
 {
@@ -119,9 +120,46 @@ class InventoryManager extends Component
     public function store()
     {
         $this->validate([
-            'card_id' => 'required',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'card_id' => [
+                'required',
+                'integer',
+                'exists:cards,id',
+            ],
+            'language' => [
+                'required',
+                Rule::in([
+                    'Español',
+                    'Inglés',
+                    'Japonés',
+                ]),
+            ],
+            'condition' => [
+                'required',
+                Rule::in([
+                    'Near Mint (NM)',
+                    'Lightly Played (LP)',
+                    'Moderately Played (MP)',
+                ]),
+            ],
+            'variant' => [
+                'required',
+                Rule::in([
+                    'Normal',
+                    'Reverse Holo',
+                    'Holo',
+                    '1st Edition',
+                ]),
+            ],
+            'price' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
+            'stock' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
         ]);
 
         Inventory::updateOrCreate(['id' => $this->inventoryId], [
