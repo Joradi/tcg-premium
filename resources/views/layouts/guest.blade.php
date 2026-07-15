@@ -1,30 +1,47 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Gosuto Aku - Acceso</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+<body class="min-h-screen bg-[#12001F] font-sans text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">
+<main class="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
+    <div class="w-full max-w-md">
+        <a
+            href="{{ route('storefront.catalog') }}"
+            class="mb-6 inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-[#FFF8E7]/60 transition-colors hover:text-[#80FFDB] focus:outline-none focus:ring-2 focus:ring-[#80FFDB]/40"
+        >
+            <span aria-hidden="true">←</span>
+            Volver al catálogo
+        </a>
+        <a
+            href="{{ route('storefront.catalog') }}"
+            class="group mx-auto mb-8 block w-fit"
+            aria-label="Volver al catálogo de Gosuto Aku"
+        >
+            <img
+                src="{{ asset('images/gosuto-aku-logo.png') }}"
+                alt="Gosuto Aku"
+                width="176"
+                height="176"
+                class="h-40 w-40 rounded-full border border-[#7B2CBF]/50 object-contain shadow-[0_20px_60px_rgba(90,24,154,0.35)] transition-transform duration-300 group-hover:scale-[1.03] sm:h-44 sm:w-44"
+            >
+        </a>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
-        </div>
-    </body>
+        <section class="overflow-hidden rounded-3xl border border-[#7B2CBF]/30 bg-[#2B2D42]/95 px-6 py-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:px-8">
+            {{ $slot }}
+        </section>
+
+        <p class="mt-6 text-center text-xs text-[#FFF8E7]/35">
+            © {{ date('Y') }} Gosuto Aku
+        </p>
+    </div>
+</main>
+</body>
 </html>
