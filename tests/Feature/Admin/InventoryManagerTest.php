@@ -202,3 +202,52 @@ it('cambia el estado activo de un producto', function () {
         'is_active' => true,
     ]);
 });
+
+it('rechaza valores inválidos al guardar un producto', function () {
+    $cardSet = CardSet::create([
+        'name' => 'Set para validación',
+        'set_total' => 100,
+    ]);
+
+    $card = Card::create([
+        'card_set_id' => $cardSet->id,
+        'name' => 'Carta para validación',
+        'card_number' => '001',
+    ]);
+
+    Livewire::test(InventoryManager::class)
+        ->call('create')
+        ->set('card_id', $card->id)
+        ->set('language', 'Klingon')
+        ->set('condition', 'Destruida')
+        ->set('variant', 'Edición inexistente')
+        ->set('price', -1000)
+        ->set('stock', -2)
+        ->call('store')
+        ->assertHasErrors([
+            'language',
+            'condition',
+            'variant',
+            'price',
+            'stock',
+        ]);
+
+    $this->assertDatabaseCount('inventories', 0);
+});
+
+it('rechaza una carta que no existe al guardar un producto', function () {
+    Livewire::test(InventoryManager::class)
+        ->call('create')
+        ->set('card_id', 999999)
+        ->set('language', 'Español')
+        ->set('condition', 'Near Mint (NM)')
+        ->set('variant', 'Normal')
+        ->set('price', 10000)
+        ->set('stock', 1)
+        ->call('store')
+        ->assertHasErrors([
+            'card_id' => 'exists',
+        ]);
+
+    $this->assertDatabaseCount('inventories', 0);
+});
