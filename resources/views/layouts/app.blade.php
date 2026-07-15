@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gosuto Aku - TCG Store</title>
-
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="512x512"
+        href="{{ asset('images/gosuto-aku-logo.png') }}"
+    >
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-screen flex-col bg-[#12001F] text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">

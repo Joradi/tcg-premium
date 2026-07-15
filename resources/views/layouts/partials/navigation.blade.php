@@ -5,9 +5,14 @@
                 href="{{ route('storefront.catalog') }}"
                 class="order-1 flex shrink-0 items-center gap-2.5 group"
             >
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#80FFDB]/25 bg-[#7B2CBF] font-black text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/25 transition-colors group-hover:bg-[#5A189A]">
-                    gA
-                </div>
+                <img
+                    src="{{ asset('images/gosuto-aku-logo.png') }}"
+                    alt=""
+                    width="40"
+                    height="40"
+                    aria-hidden="true"
+                    class="h-10 w-10 shrink-0 rounded-full border border-[#80FFDB]/25 object-contain shadow-lg shadow-[#7B2CBF]/25 transition-transform duration-300 group-hover:scale-105"
+                >
 
                 <span class="text-lg font-black tracking-tight text-[#FFF8E7] sm:text-xl">
                     Gosuto Aku
