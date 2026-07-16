@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\IsAdmin;
+use App\Livewire\Admin\InventoryManager;
 use App\Livewire\Storefront\Catalog;
+use App\Livewire\Storefront\Checkout;
+use App\Livewire\Storefront\CheckoutConfirmation;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', Catalog::class)->name('storefront.catalog');
 
@@ -16,8 +20,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin/inventario', \App\Livewire\Admin\InventoryManager::class)
-    ->middleware(['auth', \App\Http\Middleware\IsAdmin::class])
+Route::get('/admin/inventario', InventoryManager::class)
+    ->middleware(['auth', IsAdmin::class])
     ->name('admin.inventario');
+
+Route::get('/checkout', Checkout::class)
+    ->name('storefront.checkout');
+
+Route::get('/checkout/confirmacion', CheckoutConfirmation::class)
+    ->name('storefront.checkout.confirmation');
 
 require __DIR__.'/auth.php';

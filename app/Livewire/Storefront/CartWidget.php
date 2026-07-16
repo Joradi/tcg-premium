@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Storefront;
 
+use App\Actions\Cart\ResolveActiveCart;
 use App\Models\Cart;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -207,12 +208,14 @@ class CartWidget extends Component
 
     private function getCart(): ?Cart
     {
-        return Cart::with(['items.inventory.card'])
-            ->where('session_id', session()->getId())
-            ->when(
-                auth()->check(),
-                fn ($query) => $query->orWhere('user_id', auth()->id())
-            )
-            ->first();
+        $cart = app(ResolveActiveCart::class)->handle(
+            sessionId: session()->getId(),
+            userId: auth()->id(),
+            createIfMissing: false,
+        );
+
+        return $cart?->load([
+            'items.inventory.card',
+        ]);
     }
 }

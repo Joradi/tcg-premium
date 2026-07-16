@@ -2,14 +2,11 @@
 
 namespace App\Livewire\Storefront;
 
-use App\Models\Cart;
+use App\Actions\Cart\ResolveActiveCart;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-
-
-
 
 class Catalog extends Component
 {
@@ -46,10 +43,10 @@ class Catalog extends Component
             ->where('is_active', true)
             ->where('stock', '>', 0);
 
-        if (!empty($this->search)) {
+        if (! empty($this->search)) {
             $query->whereHas('card', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('artist', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('artist', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -61,53 +58,51 @@ class Catalog extends Component
     public function addToCart(int $inventoryId): void
     {
         $cartUpdated = DB::transaction(function () use ($inventoryId): bool {
-           $inventory = Inventory::query()
-           ->lockForUpdate()
-           ->find($inventoryId);
+            $inventory = Inventory::query()
+                ->lockForUpdate()
+                ->find($inventoryId);
 
-           if(!$inventory || $inventory->stock < 1) {
-               $this->cartMessage = 'Este producto no tiene stock disponible.';
-               $this->cartMessageType = 'error';
+            if (! $inventory || $inventory->stock < 1) {
+                $this->cartMessage = 'Este producto no tiene stock disponible.';
+                $this->cartMessageType = 'error';
 
-               return false;
-           }
+                return false;
+            }
 
-           $cart = Cart::firstOrCreate([
-               'session_id' => session()->getId(),
-               'user_id' => auth()->id(),
-           ]);
+            $cart = app(ResolveActiveCart::class)->handle(
+                sessionId: session()->getId(),
+                userId: auth()->id(),
+            );
 
-           $cartItem = $cart->items()
-               ->where('inventory_id', $inventoryId)
-               ->lockForUpdate()
-               ->first();
+            $cartItem = $cart->items()
+                ->where('inventory_id', $inventoryId)
+                ->lockForUpdate()
+                ->first();
 
-           if ($cartItem)
-           {
-               if ($cartItem->quantity >= $inventory->stock)
-               {
-                   $this->cartMessage = 'No puedes agregar más unidades que el stock disponible.';
-                   $this->cartMessageType = 'error';
+            if ($cartItem) {
+                if ($cartItem->quantity >= $inventory->stock) {
+                    $this->cartMessage = 'No puedes agregar más unidades que el stock disponible.';
+                    $this->cartMessageType = 'error';
 
-                   return false;
-               }
-               $cartItem->increment('quantity');
+                    return false;
+                }
+                $cartItem->increment('quantity');
 
-               $this->cartMessage = 'Cantidad actualizada en el carrito';
-               $this->cartMessageType = 'success';
+                $this->cartMessage = 'Cantidad actualizada en el carrito';
+                $this->cartMessageType = 'success';
 
-               return true;
-           }
+                return true;
+            }
 
-           $cart->items()->create([
-              'inventory_id' => $inventoryId,
-              'quantity' => 1,
-           ]);
+            $cart->items()->create([
+                'inventory_id' => $inventoryId,
+                'quantity' => 1,
+            ]);
 
-           $this->cartMessage = 'Producto agregado al carrito';
-           $this->cartMessageType = 'success';
+            $this->cartMessage = 'Producto agregado al carrito';
+            $this->cartMessageType = 'success';
 
-           return true;
+            return true;
 
         });
 
@@ -119,7 +114,7 @@ class Catalog extends Component
             type: $this->cartMessageType
         );
 
-        if($cartUpdated){
+        if ($cartUpdated) {
             $this->dispatch('cart-updated');
         }
 

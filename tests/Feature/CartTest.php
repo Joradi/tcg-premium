@@ -335,3 +335,42 @@ it('quita completamente un producto del carrito', function () {
         'id' => $item->id,
     ]);
 });
+
+it('muestra un enlace al checkout cuando el carrito tiene productos', function () {
+    $cardSet = CardSet::create([
+        'name' => 'Set enlace checkout',
+        'set_total' => 20,
+    ]);
+
+    $card = Card::create([
+        'card_set_id' => $cardSet->id,
+        'name' => 'Carta enlace checkout',
+        'card_number' => '018',
+    ]);
+
+    $inventory = Inventory::create([
+        'card_id' => $card->id,
+        'language' => 'Español',
+        'condition' => 'Near Mint (NM)',
+        'variant' => 'Normal',
+        'price' => 11900,
+        'stock' => 2,
+        'is_active' => true,
+    ]);
+
+    $cart = Cart::create([
+        'user_id' => null,
+        'session_id' => session()->getId(),
+    ]);
+
+    $cart->items()->create([
+        'inventory_id' => $inventory->id,
+        'quantity' => 1,
+    ]);
+
+    Livewire::test(CartWidget::class)
+        ->assertSee('Proceder al Pago')
+        ->assertSeeHtml(
+            'href="'.route('storefront.checkout').'"',
+        );
+});
