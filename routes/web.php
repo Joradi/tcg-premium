@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
 use App\Livewire\Admin\InventoryManager;
+use App\Livewire\Admin\OrderDetail;
+use App\Livewire\Admin\OrderManager;
 use App\Livewire\Storefront\Catalog;
 use App\Livewire\Storefront\Checkout;
 use App\Livewire\Storefront\CheckoutConfirmation;
@@ -29,5 +31,13 @@ Route::get('/checkout', Checkout::class)
 
 Route::get('/checkout/confirmacion', CheckoutConfirmation::class)
     ->name('storefront.checkout.confirmation');
+
+Route::get('/admin/pedidos', OrderManager::class)
+    ->middleware(['auth', IsAdmin::class])
+    ->name('admin.pedidos');
+
+Route::get('/admin/pedidos/{order}', OrderDetail::class)
+    ->middleware(['auth', IsAdmin::class])
+    ->name('admin.pedidos.show');
 
 require __DIR__.'/auth.php';

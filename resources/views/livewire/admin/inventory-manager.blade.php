@@ -15,13 +15,22 @@
                 </p>
             </div>
 
-            <button
-                type="button"
-                wire:click="create()"
-                class="inline-flex w-full items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-5 py-3 text-sm font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-all hover:bg-[#5A189A] active:scale-[0.98] sm:w-auto"
-            >
-                Publicar producto
-            </button>
+            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                <a
+                    href="{{ route('admin.pedidos') }}"
+                    class="inline-flex items-center justify-center rounded-xl border border-[#80FFDB]/40 px-5 py-3 text-sm font-bold text-[#80FFDB] transition hover:bg-[#80FFDB]/10"
+                >
+                    Ver pedidos
+                </a>
+
+                <button
+                    type="button"
+                    wire:click="create()"
+                    class="inline-flex items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-5 py-3 text-sm font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-all hover:bg-[#5A189A] active:scale-[0.98]"
+                >
+                    Publicar producto
+                </button>
+            </div>
         </div>
 
         @if (session()->has('message'))
