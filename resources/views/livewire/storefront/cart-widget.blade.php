@@ -58,9 +58,22 @@
                                 </p>
                             </div>
 
-                            <button @if($this->cartItems->isEmpty()) disabled @endif class="flex w-full items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-6 py-4 text-base font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-colors hover:bg-[#5A189A] disabled:cursor-not-allowed disabled:opacity-50">
-                                Proceder al Pago
-                            </button>
+                            @if($this->cartItems->isEmpty())
+                                <button
+                                    type="button"
+                                    disabled
+                                    class="flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-6 py-4 text-base font-bold text-[#FFF8E7] opacity-50"
+                                >
+                                    Proceder al Pago
+                                </button>
+                            @else
+                                <a
+                                    href="{{ route('storefront.checkout') }}"
+                                    class="flex w-full items-center justify-center rounded-xl border border-[#7B2CBF] bg-[#7B2CBF] px-6 py-4 text-base font-bold text-[#FFF8E7] shadow-lg shadow-[#7B2CBF]/20 transition-colors hover:bg-[#5A189A]"
+                                >
+                                    Proceder al Pago
+                                </a>
+                            @endif
 
                             <p class="mt-3 text-center text-[11px] text-[#FFF8E7]/40">
                                 Precios expresados en pesos chilenos
