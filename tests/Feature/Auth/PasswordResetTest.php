@@ -58,3 +58,19 @@ test('password can be reset with valid token', function () {
         return true;
     });
 });
+
+test('password reset requests are rate limited by ip', function () {
+    $this->withServerVariables([
+        'REMOTE_ADDR' => '203.0.113.20',
+    ]);
+
+    foreach (range(1, 5) as $attempt) {
+        $this->post('/forgot-password', [
+            'email' => "unknown-{$attempt}@example.com",
+        ])->assertStatus(302);
+    }
+
+    $this->post('/forgot-password', [
+        'email' => 'blocked@example.com',
+    ])->assertStatus(429);
+});
