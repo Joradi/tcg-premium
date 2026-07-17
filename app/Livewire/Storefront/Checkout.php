@@ -8,6 +8,7 @@ use App\Models\Cart;
 use DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -78,6 +79,17 @@ class Checkout extends Component
     {
         $validated = $this->validate();
 
+        $rateLimitKey = $this->checkoutRateLimitKey();
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            $this->addError(
+                'cart',
+                'Demasiados intentos de compra. Espera un minuto antes de volver a intentarlo.',
+            );
+
+            return null;
+        }
+
         $cart = $this->cart;
 
         if (! $cart) {
@@ -88,6 +100,11 @@ class Checkout extends Component
 
             return null;
         }
+
+        RateLimiter::hit(
+            $rateLimitKey,
+            60,
+        );
 
         try {
             $order = app(CreateOrderFromCart::class)->handle($cart, [
@@ -142,6 +159,19 @@ class Checkout extends Component
             'shippingPostalCode' => ['nullable', 'string', 'max:20'],
             'shippingCountry' => ['required', 'string', 'max:120'],
         ];
+    }
+
+    private function checkoutRateLimitKey(): string
+    {
+        $identity = auth()->check()
+            ? 'user:'.auth()->id()
+            : 'guest:'.session()->getId();
+
+        return sprintf(
+            'checkout-submit:%s|%s',
+            $identity,
+            request()->ip(),
+        );
     }
 
     public function render(): View

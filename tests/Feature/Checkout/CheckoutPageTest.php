@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
 
 it('muestra la página de checkout', function () {
@@ -268,4 +269,69 @@ it('precarga el nombre y correo del usuario autenticado', function () {
 it('impide acceder a la confirmación sin un pedido completado', function () {
     $this->get(route('storefront.checkout.confirmation'))
         ->assertNotFound();
+});
+
+it('bloquea temporalmente demasiados intentos de finalizar compra', function () {
+    $cardSet = CardSet::create([
+        'name' => 'Set checkout limitado',
+        'set_total' => 100,
+    ]);
+
+    $card = Card::create([
+        'card_set_id' => $cardSet->id,
+        'name' => 'Carta checkout limitado',
+        'card_number' => '070',
+    ]);
+
+    $inventory = Inventory::create([
+        'card_id' => $card->id,
+        'language' => 'Español',
+        'condition' => 'Near Mint (NM)',
+        'variant' => 'Normal',
+        'price' => 11900,
+        'stock' => 4,
+        'is_active' => true,
+    ]);
+
+    $cart = Cart::create([
+        'user_id' => null,
+        'session_id' => session()->getId(),
+    ]);
+
+    $cart->items()->create([
+        'inventory_id' => $inventory->id,
+        'quantity' => 2,
+    ]);
+
+    $rateLimitKey = sprintf(
+        'checkout-submit:guest:%s|127.0.0.1',
+        $cart->session_id,
+    );
+
+    RateLimiter::clear($rateLimitKey);
+
+    foreach (range(1, 5) as $_) {
+        RateLimiter::hit($rateLimitKey, 60);
+    }
+
+    Livewire::test(Checkout::class)
+        ->set('customerName', 'Cliente limitado')
+        ->set('customerEmail', 'limitado@example.com')
+        ->set('shippingAddressLine1', 'Avenida Límite 123')
+        ->set('shippingCity', 'Santiago')
+        ->set('shippingRegion', 'Región Metropolitana')
+        ->call('submit')
+        ->assertHasErrors([
+            'cart' => [
+                'Demasiados intentos de compra. Espera un minuto antes de volver a intentarlo.',
+            ],
+        ]);
+
+    expect($inventory->refresh()->stock)->toBe(4)
+        ->and($cart->items()->count())->toBe(1);
+
+    $this->assertDatabaseCount('orders', 0);
+    $this->assertDatabaseCount('order_items', 0);
+
+    RateLimiter::clear($rateLimitKey);
 });
