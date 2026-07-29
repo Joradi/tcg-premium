@@ -8,14 +8,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-
     public function handle(Request $request, Closure $next): Response
     {
-        if(!auth()->user()->is_admin)
-        {
+        if (! auth()->user()->is_admin) {
 
             return redirect()->route('storefront.catalog');
         }
+
         return $next($request);
     }
 }

@@ -2,25 +2,42 @@
 
 namespace App\Livewire\Admin;
 
-
 use App\Models\Card;
 use App\Models\Inventory;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Validation\Rule;
 
 class InventoryManager extends Component
 {
     use WithPagination;
 
     public $search = '';
+
     public $filterCondition = '';
+
     public $filterLanguage = '';
 
     public $isOpen = false;
+
     public $inventoryId = null;
-    public $card_id, $language = 'Español', $condition = 'Near Mint (NM)', $variant = 'Normal', $price = 0, $stock = 1, $is_active = true;
+
+    public $card_id;
+
+    public $language = 'Español';
+
+    public $condition = 'Near Mint (NM)';
+
+    public $variant = 'Normal';
+
+    public $price = 0;
+
+    public $stock = 1;
+
+    public $is_active = true;
+
     public $cardSearch = '';
+
     public $selectedCard = null;
 
     public function updatingSearch()
@@ -32,21 +49,20 @@ class InventoryManager extends Component
     {
         $query = Inventory::with(['card.set']);
 
-        if (!empty($this->search)) {
+        if (! empty($this->search)) {
             $query->whereHas('card', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('artist', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('artist', 'like', '%'.$this->search.'%');
             });
         }
 
-        if (!empty($this->filterCondition)) {
+        if (! empty($this->filterCondition)) {
             $query->where('condition', $this->filterCondition);
         }
 
-        if (!empty($this->filterLanguage)) {
+        if (! empty($this->filterLanguage)) {
             $query->where('language', $this->filterLanguage);
         }
-
 
         $availableCards = [];
         if (strlen($this->cardSearch) > 1) {
@@ -58,16 +74,16 @@ class InventoryManager extends Component
                 $setTotal = trim($parts[1]);   // El 189
 
                 $availableCards = Card::with('set')
-                    ->where('card_number', 'like', $cardNumber . '%')
+                    ->where('card_number', 'like', $cardNumber.'%')
                     ->whereHas('set', function ($q) use ($setTotal) {
-                        $q->where('set_total', 'like', $setTotal . '%');
+                        $q->where('set_total', 'like', $setTotal.'%');
                     })
                     ->take(8)
                     ->get();
             } else {
                 $availableCards = Card::with('set')
-                    ->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('card_number', 'like', '%' . $search . '%')
+                    ->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('card_number', 'like', '%'.$search.'%')
                     ->take(8)
                     ->get();
             }
@@ -75,7 +91,7 @@ class InventoryManager extends Component
 
         return view('livewire.admin.inventory-manager', [
             'products' => $query->orderBy('created_at', 'desc')->paginate(10),
-            'availableCards' => $availableCards
+            'availableCards' => $availableCards,
         ]);
     }
 
@@ -198,7 +214,7 @@ class InventoryManager extends Component
     public function toggleActive($id)
     {
         $inventory = Inventory::findOrFail($id);
-        $inventory->is_active = !$inventory->is_active;
+        $inventory->is_active = ! $inventory->is_active;
         $inventory->save();
     }
 

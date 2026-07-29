@@ -28,7 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $destination = $request->user()->is_admin
+            ? route('admin.inventario', absolute: false)
+            : route('storefront.catalog', absolute: false);
+
+        return redirect()->intended($destination);
     }
 
     /**

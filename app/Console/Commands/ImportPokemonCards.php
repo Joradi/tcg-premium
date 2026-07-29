@@ -2,14 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Card;
+use App\Models\CardSet;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use App\Models\CardSet;
-use App\Models\Card;
 
 class ImportPokemonCards extends Command
 {
-    // Aquí es donde definimos el nombre que Laravel va a reconocer en la terminal
     protected $signature = 'pokemon:import {set_id=swsh10 : El ID oficial del set en la API}';
 
     protected $description = 'Importa cartas desde la API oficial de Pokémon TCG a nuestra base de datos';
@@ -19,12 +18,13 @@ class ImportPokemonCards extends Command
         $setId = $this->argument('set_id');
         $this->info("Conectando a la API de Pokemon TCG buscando el set: {$setId}...");
 
-        $response = Http::timeout(60)->get("https://api.pokemontcg.io/v2/cards", [
-            'q' => "set.id:{$setId}"
+        $response = Http::timeout(60)->get('https://api.pokemontcg.io/v2/cards', [
+            'q' => "set.id:{$setId}",
         ]);
 
         if ($response->failed()) {
-            $this->error('¡Ups! Hubo un error al conectar con la API.');
+            $this->error('No fue posible conectar con la API de Pokémon TCG.');
+
             return;
         }
 
@@ -32,10 +32,13 @@ class ImportPokemonCards extends Command
 
         if (empty($cardsData)) {
             $this->warn("No se encontraron cartas para el ID: {$setId}.");
+
             return;
         }
 
-        $this->info("¡Éxito! Se encontraron " . count($cardsData) . " cartas. Guardando en la base de datos...");
+        $this->info(
+            'Se encontraron '.count($cardsData).' cartas. Guardando en la base de datos...',
+        );
 
         $setInfo = $cardsData[0]['set'];
         $cardSet = CardSet::firstOrCreate(
@@ -49,7 +52,7 @@ class ImportPokemonCards extends Command
             Card::updateOrCreate(
                 [
                     'card_set_id' => $cardSet->id,
-                    'card_number' => $cardData['number']
+                    'card_number' => $cardData['number'],
                 ],
                 [
                     'name' => $cardData['name'],
@@ -63,6 +66,6 @@ class ImportPokemonCards extends Command
 
         $bar->finish();
         $this->newLine();
-        $this->info("¡Importación del set '{$cardSet->name}' finalizada con éxito! Ya puedes buscarlas en tu panel.");
+        $this->info("Importación del set '{$cardSet->name}' finalizada.");
     }
 }

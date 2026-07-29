@@ -18,13 +18,13 @@
                  @click="open = false"
                  class="absolute inset-0 bg-[#12001F]/85 backdrop-blur-sm transition-opacity"></div>
 
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex w-full justify-end sm:pl-10">
                 <div x-show="open"
                      x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
                      x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                     class="pointer-events-auto h-[100dvh] w-screen max-w-lg">
+                     class="pointer-events-auto h-[100dvh] w-full bg-[#12001F] sm:max-w-lg">
 
-                    <div class="grid h-[100dvh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden border-l border-[#7B2CBF]/30 bg-[#12001F] shadow-2xl shadow-black/50">
+                    <div class="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden border-l border-[#7B2CBF]/30 bg-[#12001F] shadow-2xl shadow-black/50">
                         <div class="flex shrink-0 items-start justify-between border-b border-gray-800 px-6 py-5">
                             <h2 class="text-xl font-black uppercase tracking-tight text-[#FFF8E7]" id="slide-over-title">Tu Mazo</h2>
                             <button @click="open = false" class="p-1 text-[#FFF8E7]/55 transition-colors hover:text-[#80FFDB]">
@@ -32,7 +32,7 @@
                             </button>
                         </div>
 
-                        <div class="min-h-0 flex-1 overflow-y-auto px-6 py-6">
+                        <div class="min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
                             @if($this->cartItems->isEmpty())
                                 <div class="flex flex-col items-center justify-center h-full text-gray-500">
                                     <svg class="w-16 h-16 mb-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -49,7 +49,7 @@
                             @endif
                         </div>
 
-                        <div class="shrink-0 border-t border-[#7B2CBF]/25 bg-[#2B2D42]/45 px-6 py-6">
+                        <div class="shrink-0 border-t border-[#7B2CBF]/25 bg-[#2B2D42]/45 px-4 py-4 sm:px-6 sm:py-6">
                             <div class="mb-4 flex items-baseline justify-between gap-4 text-lg font-black text-[#FFF8E7]">
                                 <p class="shrink-0">Total</p>
 

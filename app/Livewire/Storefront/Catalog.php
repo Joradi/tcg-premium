@@ -14,7 +14,6 @@ class Catalog extends Component
 
     public $search = '';
 
-    // 1. La variable que guarda la carta seleccionada para el Modal
     public $selectedProduct = null;
 
     public ?string $cartMessage = null;
@@ -31,7 +30,6 @@ class Catalog extends Component
         $this->selectedProduct = Inventory::with(['card.set'])->find($id);
     }
 
-    // 3. Función que se dispara al hacer clic en la "X" o fuera del modal
     public function closeQuickView()
     {
         $this->selectedProduct = null;

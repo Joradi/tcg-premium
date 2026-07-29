@@ -10,16 +10,62 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+test('regular users are redirected to the catalog after login', function () {
+    $user = User::factory()->create([
+        'is_admin' => false,
+    ]);
 
     $response = $this->post('/login', [
         'email' => $user->email,
         'password' => 'password',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $this->assertAuthenticatedAs($user);
+
+    $response->assertRedirect(
+        route('storefront.catalog', absolute: false),
+    );
+});
+
+test('administrators are redirected to inventory after login', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $response = $this->post('/login', [
+        'email' => $admin->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticatedAs($admin);
+
+    $response->assertRedirect(
+        route('admin.inventario', absolute: false),
+    );
+});
+
+test('regular users are redirected from dashboard to the catalog', function () {
+    $user = User::factory()->create([
+        'is_admin' => false,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertRedirect(
+            route('storefront.catalog', absolute: false),
+        );
+});
+
+test('administrators are redirected from dashboard to inventory', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('dashboard'))
+        ->assertRedirect(
+            route('admin.inventario', absolute: false),
+        );
 });
 
 test('users can not authenticate with invalid password', function () {

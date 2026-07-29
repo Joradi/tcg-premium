@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('card_set_id')->constrained()->onDelete('cascade');
-             $table->string('name');
-             $table->string('card_number')->nullable();
-             $table->string('card_type')->nullable();
-             $table->string('artist')->nullable();
-             $table->string('image_url')->nullable();
-             $table->timestamps();
+            $table->foreignId('card_set_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('card_number')->nullable();
+            $table->string('card_type')->nullable();
+            $table->string('artist')->nullable();
+            $table->string('image_url')->nullable();
+            $table->timestamps();
         });
     }
 

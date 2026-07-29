@@ -6,7 +6,7 @@ use App\Models\CardSet;
 use App\Models\Inventory;
 use Livewire\Livewire;
 
-it('filtra el inventario al buscar por nombre de carta', function() {
+it('filtra el inventario al buscar por nombre de carta', function () {
     $cardSet = CardSet::create([
         'name' => 'Set de prueba',
         'set_total' => 100,
@@ -29,21 +29,21 @@ it('filtra el inventario al buscar por nombre de carta', function() {
         'price' => 15000,
         'stock' => 3,
         'is_active' => true,
-        ]);
+    ]);
 
     Inventory::create([
         'card_id' => $charizard->id,
         'price' => 30000,
         'stock' => 2,
         'is_active' => true,
-        ]);
+    ]);
     Livewire::test(InventoryManager::class)
         ->set('search', 'Pikachu')
         ->assertSee('Pikachu de prueba')
         ->assertDontSee('Charizard de prueba');
 });
 
-it('carga la carta seleccionada al editar un producto', function() {
+it('carga la carta seleccionada al editar un producto', function () {
     $cardSet = CardSet::create([
         'name' => 'Set para edición',
         'set_total' => 120,
@@ -53,7 +53,7 @@ it('carga la carta seleccionada al editar un producto', function() {
         'card_set_id' => $cardSet->id,
         'name' => 'Lucario de prueba',
         'card_number' => '079',
-        ]);
+    ]);
 
     $inventory = Inventory::create([
         'card_id' => $card->id,
@@ -63,7 +63,7 @@ it('carga la carta seleccionada al editar un producto', function() {
         'price' => 18500,
         'stock' => 4,
         'is_active' => true,
-        ]);
+    ]);
 
     Livewire::test(InventoryManager::class)
         ->set('cardSearch', 'Búsqueda anterior')
