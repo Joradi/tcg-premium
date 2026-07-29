@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('card_sets', function( Blueprint $table){
-           $table->id();
-           $table->string('name');
-           $table->string('set_total')->nullable();
-           $table->timestamps();
+        Schema::create('card_sets', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('set_total')->nullable();
+            $table->timestamps();
         });
     }
 

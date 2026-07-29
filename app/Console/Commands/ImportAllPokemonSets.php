@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 class ImportAllPokemonSets extends Command
 {
     protected $signature = 'pokemon:import-all-sets';
+
     protected $description = 'Importa el catálogo historico de cartas';
 
     public function handle()
@@ -17,43 +18,41 @@ class ImportAllPokemonSets extends Command
         $this->info('Conectando a la API de Pokémon...');
         $response = Http::timeout(60)->get('https://api.pokemontcg.io/v2/sets');
 
-        if($response->failed()) {
+        if ($response->failed()) {
             $this->error('Error al conectar con la API de Pokémon');
+
             return;
         }
 
         $sets = $response->json()['data'];
 
-        $this->info('Se encontraron ' . count($sets) . ' sets. Iniciando importación...');
+        $this->info('Se encontraron '.count($sets).' sets. Iniciando importación...');
 
-        foreach($sets as $set)
-        {
+        foreach ($sets as $set) {
             $setId = $set['id'];
             $this->info("Importando set: {$set['name']} ({$setId})...");
 
             try {
-                // Intentamos hacer la petición
-                $cardsResponse = Http::timeout(120)->get("https://api.pokemontcg.io/v2/cards", [
-                    'q' => "set.id:{$setId}"
+                $cardsResponse = Http::timeout(120)->get('https://api.pokemontcg.io/v2/cards', [
+                    'q' => "set.id:{$setId}",
                 ]);
 
-                if($cardsResponse->failed())
-                {
-                    $this->error("Fallo al descargar {$set['name']}. Código HTTP: " . $cardsResponse->status());
+                if ($cardsResponse->failed()) {
+                    $this->error("Fallo al descargar {$set['name']}. Código HTTP: ".$cardsResponse->status());
                     sleep(3);
+
                     continue;
                 }
             } catch (\Exception $e) {
-                // Si hay un micro-corte de internet o cURL error 18, lo atrapamos aquí y no explota
                 $this->error("Caída de conexión al descargar {$set['name']}. Saltando al siguiente...");
                 sleep(3);
+
                 continue;
             }
 
             $cardsData = $cardsResponse->json()['data'] ?? [];
 
-            if(empty($cardsData))
-            {
+            if (empty($cardsData)) {
                 continue;
             }
 
@@ -62,12 +61,11 @@ class ImportAllPokemonSets extends Command
                 ['set_total' => $set['printedTotal']]
             );
 
-            foreach($cardsData as $cardData)
-            {
+            foreach ($cardsData as $cardData) {
                 Card::updateOrCreate(
                     [
                         'card_set_id' => $cardSet->id,
-                        'card_number' => $cardData['number']
+                        'card_number' => $cardData['number'],
                     ],
                     [
                         'name' => $cardData['name'],
@@ -78,12 +76,12 @@ class ImportAllPokemonSets extends Command
                 );
             }
 
-            $this->info("✓ Guardadas " . count($cardsData) . " cartas de {$set['name']}.");
+            $this->info('✓ Guardadas '.count($cardsData)." cartas de {$set['name']}.");
 
-            sleep(3); // Pausa de 3 segundos vital para no saturar la API
+            sleep(3);
         }
 
         $this->newLine();
-        $this->info("¡Operación titánica completada! Tu base de datos tiene toda la historia.");
+        $this->info('Importación completa finalizada.');
     }
 }

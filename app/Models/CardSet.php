@@ -13,5 +13,4 @@ class CardSet extends Model
     {
         return $this->hasMany(Card::class);
     }
-
 }
