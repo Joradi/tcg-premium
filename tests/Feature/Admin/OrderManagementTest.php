@@ -7,6 +7,7 @@ use App\Models\CardSet;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 
 it('redirige a los visitantes al login al acceder a pedidos administrativos', function () {
@@ -69,6 +70,52 @@ it('muestra los pedidos en el listado administrativo', function () {
         ->assertSeeHtml(
             'href="'.route('admin.pedidos.show', $order).'"',
         );
+});
+
+it('muestra la fecha de los pedidos en la zona horaria configurada', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $order = Order::create([
+        'user_id' => null,
+        'status' => 'pending',
+        'customer_name' => 'Cliente horario',
+        'customer_email' => 'horario@example.com',
+        'customer_phone' => null,
+        'shipping_address_line_1' => 'Avenida Horario 123',
+        'shipping_address_line_2' => null,
+        'shipping_city' => 'Santiago',
+        'shipping_region' => 'Región Metropolitana',
+        'shipping_postal_code' => null,
+        'shipping_country' => 'Chile',
+        'subtotal' => 11900,
+        'tax_total' => 1900,
+        'shipping_total' => 0,
+        'total' => 11900,
+    ]);
+
+    $order->forceFill([
+        'created_at' => Carbon::create(
+            2026,
+            7,
+            29,
+            16,
+            35,
+            0,
+            'UTC',
+        ),
+    ])->saveQuietly();
+
+    $this->actingAs($admin)
+        ->get(route('admin.pedidos'))
+        ->assertOk()
+        ->assertSee('29-07-2026 12:35');
+
+    $this->actingAs($admin)
+        ->get(route('admin.pedidos.show', $order))
+        ->assertOk()
+        ->assertSee('29-07-2026 12:35');
 });
 
 it('busca pedidos por nombre o correo del cliente', function () {

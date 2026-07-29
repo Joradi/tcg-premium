@@ -34,7 +34,10 @@
             </div>
 
             <p class="mt-3 text-sm text-[#FFF8E7]/50">
-                Creado el {{ $order->created_at->format('d-m-Y H:i') }}
+                Creado el {{ $order->created_at
+                    ->copy()
+                    ->timezone(config('app.display_timezone'))
+                    ->format('d-m-Y H:i') }}
             </p>
         </header>
 

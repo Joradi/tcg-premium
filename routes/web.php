@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', Catalog::class)->name('storefront.catalog');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return auth()->user()->is_admin
+        ? redirect()->route('admin.inventario')
+        : redirect()->route('storefront.catalog');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

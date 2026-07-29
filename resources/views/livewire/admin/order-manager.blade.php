@@ -92,7 +92,10 @@
                         </p>
 
                         <p class="mt-2 text-sm text-[#FFF8E7]/55">
-                            {{ $order->created_at->format('d-m-Y H:i') }}
+                            {{ $order->created_at
+                                ->copy()
+                                ->timezone(config('app.display_timezone'))
+                                ->format('d-m-Y H:i') }}
                         </p>
                     </div>
 
