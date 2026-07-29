@@ -21,7 +21,7 @@ class Catalog extends Component
 
     public string $cartMessageType = 'success';
 
-    protected function updatingSearch()
+    public function updatingSearch()
     {
         $this->resetPage();
     }
