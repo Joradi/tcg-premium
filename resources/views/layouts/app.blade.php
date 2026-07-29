@@ -12,7 +12,7 @@
     >
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen flex-col bg-[#12001F] text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">
+<body class="flex min-h-screen flex-col overflow-x-hidden bg-[#12001F] text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">
 @include('layouts.partials.navigation')
 
 <main class="flex-grow">

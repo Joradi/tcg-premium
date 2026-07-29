@@ -245,8 +245,12 @@
                         </span>
                     </button>
 
-                    <p class="text-center text-xs text-gray-500 mt-3.5 font-medium">
-                        Solo quedan {{ $selectedProduct->stock }} unidades en inventario
+                    <p class="mt-3.5 text-center text-xs font-medium text-gray-500">
+                        @if ((int) $selectedProduct->stock === 1)
+                            Solo queda 1 unidad en inventario
+                        @else
+                            Solo quedan {{ $selectedProduct->stock }} unidades en inventario
+                        @endif
                     </p>
 
                 </div>

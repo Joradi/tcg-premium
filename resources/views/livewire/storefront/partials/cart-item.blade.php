@@ -1,9 +1,9 @@
 <li
     wire:key="cart-item-{{ $item->id }}"
-    class="rounded-2xl border border-[#7B2CBF]/25 bg-[#2B2D42]/70 p-4 shadow-[0_16px_40px_rgba(18,0,31,0.28)]"
+    class="rounded-2xl border border-[#7B2CBF]/25 bg-[#2B2D42]/70 p-3 shadow-[0_16px_40px_rgba(18,0,31,0.28)] sm:p-4"
 >
-    <div class="flex gap-4">
-        <div class="flex h-28 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#7B2CBF]/30 bg-[#12001F]">
+    <div class="flex items-start gap-3 sm:gap-4">
+        <div class="flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#7B2CBF]/30 bg-[#12001F] sm:h-28 sm:w-20">
             <img
                 src="{{ $item->inventory->card->image_url }}"
                 alt="{{ $item->inventory->card->name }}"
@@ -12,7 +12,7 @@
         </div>
 
         <div class="min-w-0 flex-1">
-            <div class="flex items-start justify-between gap-3">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                 <div class="min-w-0">
                     <h3 class="truncate text-base font-bold text-[#FFF8E7]">
                         {{ $item->inventory->card->name }}
@@ -34,7 +34,7 @@
                 Stock disponible: {{ $item->inventory->stock }}
             </p>
 
-            <div class="mt-4 flex flex-wrap items-center gap-3">
+            <div class="mt-3 flex flex-wrap items-center gap-2 sm:mt-4 sm:gap-3">
                 <div class="inline-flex items-center rounded-xl border border-[#7B2CBF]/40 bg-[#12001F] p-1">
                     <button
                         type="button"

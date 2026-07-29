@@ -15,7 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-[#12001F] font-sans text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">
+<body class="min-h-screen overflow-x-hidden bg-[#12001F] font-sans text-[#FFF8E7] antialiased selection:bg-[#80FFDB] selection:text-[#12001F]">
 <main class="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
     <div class="w-full max-w-md">
         <a
